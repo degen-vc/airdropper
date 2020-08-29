@@ -1,12 +1,10 @@
-pragma solidity 0.4.21;
-
+pragma solidity 0.6.1;
 
 /**
  * @title SafeMath
  * @dev Math operations with safety checks that throw on error
  */
 library SafeMath {
-
     /**
      * @dev Multiplies two numbers, throws on overflow.
      */
@@ -47,7 +45,6 @@ library SafeMath {
     }
 }
 
-
 /**
  * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
@@ -56,13 +53,16 @@ library SafeMath {
 contract Ownable {
     address public owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
      * account.
      */
-    function Ownable() public {
+    constructor() public {
         owner = msg.sender;
     }
 
@@ -83,21 +83,39 @@ contract Ownable {
         emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
     }
-
 }
 
+abstract contract ERC20 {
+    function totalSupply() public virtual view returns (uint256);
 
-contract ERC20 {
-    function totalSupply() public view returns (uint256);
-    function balanceOf(address who) public view returns (uint256);
-    function transfer(address to, uint256 value) public returns (bool);
-    function allowance(address owner, address spender) public view returns (uint256);
-    function transferFrom(address from, address to, uint256 value) public returns (bool);
-    function approve(address spender, uint256 value) public returns (bool);
+    function balanceOf(address who) public virtual view returns (uint256);
+
+    function transfer(address to, uint256 value) public virtual returns (bool);
+
+    function allowance(address owner, address spender)
+        public
+        virtual
+        view
+        returns (uint256);
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public virtual returns (bool);
+
+    function approve(address spender, uint256 value)
+        public
+        virtual
+        returns (bool);
+
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
-
 
 /**
  * @title Airdropper
@@ -108,53 +126,42 @@ contract ERC20 {
  *   address has set a sufficient allowance for the address of this contract.
  */
 contract Airdropper is Ownable {
-    using SafeMath for uint;
-
+    using SafeMath for uint256;
+    mapping (address=>uint) public balances; 
     ERC20 public token;
-    uint public multiplier;
 
     /**
      * @dev Constructor.
      * @param tokenAddress Address of the token contract.
-     * @param decimals Decimals as specified by the token.
      */
-    function Airdropper(address tokenAddress, uint decimals) public {
-        require(decimals <= 77);  // 10**77 < 2**256-1 < 10**78
-
+    constructor(address tokenAddress) public {
         token = ERC20(tokenAddress);
-        multiplier = 10**decimals;
     }
 
-    /**
-     * @dev Airdrops some tokens to some accounts.
-     * @param source The address of the current token holder.
-     * @param dests List of account addresses.
-     * @param values List of token amounts. Note that these are in whole
-     *   tokens. Fractions of tokens are not supported.
-     */
-    function airdrop(address source, address[] dests, uint[] values) public onlyOwner {
-        // This simple validation will catch most mistakes without consuming
-        // too much gas.
-        require(dests.length == values.length);
+    //approve this function. Not mandatory but strongly recommended
+    function topUp (address tokenAddress, uint value) public returns (bool){
+        token = ERC20(token);
+        balances[msg.sender].add(value); 
+        return token.transferFrom (msg.sender,address(this),value);
+    }
 
+    //in case of accidental sending
+    function withDraw (address tokenAddress) public {
+        uint balance = token.balanceOf(address(this));
+        token.transfer(msg.sender, balance);
+    }
+
+    function setToken(address tokenAddress) public {
+        token = ERC20(tokenAddress);
+    }
+
+    function transferDrop(address[] memory dests, uint256[] memory values)
+        public
+        onlyOwner
+    {
+        require(dests.length == values.length);
         for (uint256 i = 0; i < dests.length; i++) {
-            require(token.transferFrom(source, dests[i], values[i].mul(multiplier)));
+            require(token.transfer(dests[i], values[i]));
         }
     }
-
-    /**
-     * @dev Return all tokens back to owner, in case any were accidentally
-     *   transferred to this contract.
-     */
-    function returnTokens() public onlyOwner {
-        token.transfer(owner, token.balanceOf(this));
-    }
-
-    /**
-     * @dev Destroy this contract and recover any ether to the owner.
-     */
-    function destroy() public onlyOwner {
-        selfdestruct(owner);
-    }
 }
-
