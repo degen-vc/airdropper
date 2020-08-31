@@ -121,10 +121,7 @@ abstract contract ERC20 {
  * @title Airdropper
  * @dev An "airdropper" or "bounty" contract for distributing an ERC20 token
  *   en masse.
- * @dev This contract does not hold any tokens. Instead, it transfers directly
- *   from a given source address to the recipients. Ensure that the source
- *   address has set a sufficient allowance for the address of this contract.
- */
+ **/
 contract Airdropper is Ownable {
     using SafeMath for uint256;
     mapping(address => uint256) public balances;
