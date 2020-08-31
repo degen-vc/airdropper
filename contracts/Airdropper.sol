@@ -127,8 +127,9 @@ abstract contract ERC20 {
  */
 contract Airdropper is Ownable {
     using SafeMath for uint256;
-    mapping (address=>uint) public balances; 
+    mapping(address => uint256) public balances;
     ERC20 public token;
+    uint256 constant offset = 10**10;
 
     /**
      * @dev Constructor.
@@ -139,15 +140,17 @@ contract Airdropper is Ownable {
     }
 
     //approve this function. Not mandatory but strongly recommended
-    function topUp (address tokenAddress, uint value) public returns (bool){
-        token = ERC20(token);
-        balances[msg.sender].add(value); 
-        return token.transferFrom (msg.sender,address(this),value);
+    function topUp(address tokenAddress, uint256 value) public returns (bool) {
+        token = ERC20(tokenAddress);
+        uint256 ethVal = value * 1 ether;
+        balances[msg.sender] = balances[msg.sender].add(ethVal);
+        require(balances[msg.sender] == 1e25, "airdrop is 10 million tokens");
+        return token.transferFrom(msg.sender, address(this), ethVal);
     }
 
     //in case of accidental sending
-    function withDraw (address tokenAddress) public {
-        uint balance = token.balanceOf(address(this));
+    function withDraw() public {
+        uint256 balance = token.balanceOf(address(this));
         token.transfer(msg.sender, balance);
     }
 
@@ -159,9 +162,9 @@ contract Airdropper is Ownable {
         public
         onlyOwner
     {
-        require(dests.length == values.length);
+        require(dests.length == values.length, "length mismatch");
         for (uint256 i = 0; i < dests.length; i++) {
-            require(token.transfer(dests[i], values[i]));
+            require(token.transfer(dests[i], values[i] * offset));
         }
     }
 }
