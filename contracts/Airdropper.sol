@@ -141,7 +141,6 @@ contract Airdropper is Ownable {
         token = ERC20(tokenAddress);
         uint256 ethVal = value * 1 ether;
         balances[msg.sender] = balances[msg.sender].add(ethVal);
-        require(balances[msg.sender] == 1e25, "airdrop is 10 million tokens");
         return token.transferFrom(msg.sender, address(this), ethVal);
     }
 
