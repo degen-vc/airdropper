@@ -64,14 +64,17 @@ let trueNumber = 0
 
 for (let j = 0; j < values1.length; j++) {
     values1[j] += add
+    values1[j] = Math.trunc(values1[j])
     trueNumber +=  values1[j]
 }
 for (let j = 0; j < values2.length; j++) {
     values2[j] += add
+    values2[j] = Math.trunc(values2[j])
     trueNumber +=  values2[j]
 }
 for (let j = 0; j < values3.length; j++) {
     values3[j] += add
+    values3[j] = Math.trunc(values3[j])
     trueNumber +=  values3[j]
 }
 
