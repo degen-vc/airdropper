@@ -1,0 +1,30 @@
+{
+  "name": "airdropper",
+  "version": "1.0.0",
+  "description": "1. Set the airdropper to be aware of the ERC20 token to be tranferred. To do this, call the function setToken 2. ERC20 approve the contract to take your funds 3. Call topup to execute transfer 4. transferDrop with 500 names.",
+  "main": "etherscanscrape.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/degen-vc/airdropper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/degen-vc/airdropper/issues"
+  },
+  "homepage": "https://github.com/degen-vc/airdropper#readme",
+  "devDependencies": {
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "@types/node": "^7.0.5"
+  }
+}

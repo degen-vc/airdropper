@@ -40,7 +40,7 @@ for (; i < third * 2; i++) {
     number += parseInt(smallerValue)
     values2.push(parseInt(smallerValue))
 }
-for (; i < lines.length - 1; i++) {
+for (; i < lines.length; i++) {
     let line = lines[i]
     if (!line)
         return

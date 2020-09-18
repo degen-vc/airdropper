@@ -1,0 +1,7 @@
+{
+    "file":"holders as of 19:22 17 september.csv",
+    "batchSize":35,
+    "airdrop":500000,
+    "decimalFactor":8,
+    "outputFile":"airdropoutput.txt"
+}
