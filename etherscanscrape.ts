@@ -1,14 +1,3 @@
-/**
- {
-    "file":"holders as of 19:22 17 september.csv",
-    "batchSize":"35",
-    "airdrop":"500000",
-    "decimalFactor":"8"
-}
- */
-// type BigInt = number;
-// declare const BigInt: typeof Number;
-
 interface configInterface {
     file: string,
     batchSize: number,
@@ -78,12 +67,13 @@ for (let i = 0; i < batches.length; i++) {
     }
     batches[i] = { addresses, values }
 }
+ 
 
 let outputText = ''
 console.log('Grand total: ' + total)
 for (let i = 0; i < batches.length; i++) {
     let outputLines = ['Holders:', JSON.stringify(batches[i].addresses) + '\n', 'Values:', JSON.stringify(batches[i].values)]
-    outputText += `******************batch: ${i+1}*******************\n`+outputLines.join('\n').replace(/"/g, "") + '\n\n\n\n\n'
+    outputText += `******************batch: ${i+1}*******************\n`+outputLines.join('\n')+ '\n\n\n\n\n'
 }
 
 fs.writeFileSync('temp/' + config.outputFile, outputText)
